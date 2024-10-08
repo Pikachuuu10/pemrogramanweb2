@@ -13,19 +13,19 @@
             require_once "mahasiswa.php";
 
             $james = new OrangInggris();
-            $james->setNama('James smith');
+            $james->setNama('James Smith');
             $james->ucapSalam();
 
             echo "<br>";
 
             $rano = new OrangBiasa();
-            $rano->setNama('Rano karno');
+            $rano->setNama('Rano Karno');
             $rano->ucapSalam();
 
             echo "<br>";
 
             $mahasiswa = new Mahasiswa();
-            $mahasiswa->setNama('erika');
+            $mahasiswa->setNama('Erika');
             $mahasiswa->setNim("701230056");
 
             $nilaiMahasiswa = new Nilai();
@@ -33,11 +33,12 @@
             $nilaiMahasiswa->setUts(67);
             $nilaiMahasiswa->setUas(90);
 
-            $Mahasiswa->SetNilai($nilaiMahasiswa);
+            $mahasiswa->SetNilai($nilaiMahasiswa);
+
 
             $mahasiswa->ucapSalam();
             $mahasiswa->tampilkanData();
-    ?>
+        ?>
     </div>
 </body>
 </html>
