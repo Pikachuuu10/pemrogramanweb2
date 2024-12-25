@@ -1,65 +1,113 @@
 <?php
 
-require_once "Model/DaftarBukuModel.php";
+require_once "Model/DaftarBuku.php";
 
 class BukuController{
+
     public function jalankan(){
-        $dataModel = new DaftarBukuModel();
+        $theme_value="light";
 
-        //menggunkan model
-        $dataModel = new DaftarBukuModel();
 
-        //mengirim dataModel ke BukuView dan menampilkannya
+        //mengambil nilai GET
+
+        if(isset($_GET['theme'])){
+            $theme_value = $_GET['theme'];
+
+        }
+        
+        //set cookie
+        if(!isset($_COOKIE['theme']) || isset($_GET['theme'])){
+            setcookie('theme', $theme_value, time()+3600*24);
+        }else{
+            $theme_value =$_COOKIE['theme'];
+        }
+
+        //hapus cookie
+        if(isset($_COOKIE['theme'])&& isset($_GET['hapus_theme'])){
+            setcookie('theme');
+
+        }
+        // mengakses model
+        $data = new DaftarBuku();
+
+        // memberi data model ke view dan menampilkan view
         include "View/BukuView.php";
     }
 
-    public function editBuku(){
+    public function simpan(){
+        session_start();
+        $buku = new Buku($_POST['judul'], $_POST['pengarang'], $_POST['penerbit'], $_POST['tahun']);
+
+        $daftar_buku = new DaftarBuku();
+
+        $status = $daftar_buku->simpan($buku);
+
+        if($status){
+            $_SESSION['berhasil'] = 'Data berhasil disimpan!';
+        }else{
+            $_SESSION['gagal'] = 'Data gagal disimpan!';
+        }
+
+
+        header('Location: http://localhost/index.php');
+        
+    }
+
+    public function hapus(){
+     session_start();
+
+        $id = $_POST['id_hapus'];
+
+        $daftar_buku = new DaftarBuku();
+
+        $status =$daftar_buku->hapus($id);
+
+        if($status){
+            $_SESSION['berhasil'] = 'Data berhasil dihapus!';
+        }else{
+            $_SESSION['gagal'] = 'Data gagal dihapus!';
+        }
+
+
+        header('Location: http://localhost/index.php');
+        exit;
+    }
+
+    public function edit(){
+       
+        //index.php/edit?id=5
         $id = $_GET['id'];
+//membuat objek model daftar buku
+        $daftar_buku = new DaftarBuku();
 
-        $daftar_buku = new DaftarBukuModel();
-        $buku = $daftar_buku->getDataById($id);
+    //mengambil dan membuat objek model buku berdasarkan id buku dari objek daftar_buku;
+        $buku = $daftar_buku->getBukuById($id);
 
-        include_once "View/EditBukuView.php";
+        //jika buku ada atau ketemu
+        if($buku){
+        //tampil view edit
+            include_once "view/EditBukuView.php";
+        }else{
+            header("Location: http://localhost/index.php");
+        }
     }
-
-    public function updateBuku(){
-        $buku = new Buku($_POST['judul'], $_POST['pengarang'], $_POST['penerbit'], $_POST['tahun']);
-        $buku->setId($_POST['id']);
-
-        $daftar_buku = new DaftarBukuModel();
-        $daftar_buku->update($buku);
+    public function update(){
 
         session_start();
-        $_SESSION['success'] = "Data berhasil diupdate!";
-        header('Location: http://localhost/index.php');
-        exit;
+
+      $buku =new Buku($_POST['judul'], $_POST['pengarang'], $_POST['penerbit'], $_POST['tahun']);
+      $buku->setId($_POST['id']);
+
+      $daftar_buku = new DaftarBuku();
+
+      $status=$daftar_buku->update($buku);
+
+      if($status){
+        $_SESSION['berhasil'] = 'Data berhasil diupdate!';
+    }else{
+        $_SESSION['gagal'] = 'Data gagal diupdate!';
     }
 
-    public function simpanBuku(){
-        //menangkap data dari view
-        $buku = new Buku($_POST['judul'], $_POST['pengarang'], $_POST['penerbit'], $_POST['tahun']);
-
-        //menyimpan data ke model kemudian ke database
-        $daftar_buku = new DaftarBukuModel();
-        $daftar_buku->simpan($buku);
-
-        session_start();
-        $_SESSION['success'] = "Data berhasil disimpan!";
-
-        //menampilkan view
-        header('Location: http://localhost/index.php');
-        exit;
-    }
-
-    public function hapusBuku(){
-        $id = $_POST['id'];
-
-        $daftar_buku = new DaftarBukuModel();
-
-        $daftar_buku->delete($id);
-        session_start();
-        $_SESSION['success'] = "Data berhasil dihapus!";
-        header('Location: http://localhost/index.php');
-        exit;
-    }
+      header('Location: http://localhost/index.php');
+}
 }
