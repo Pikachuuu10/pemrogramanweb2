@@ -1,30 +1,32 @@
 <?php
 
-require_once "Controller/bukucontroler.php";
+include "Controller/BukuController.php";
 
 $aplikasi = new BukuController();
-// $aplikasi->jalankan();
 
-// membaca url
-$request = $_SERVER["REQUEST_URI"];
+$request = $_SERVER['REQUEST_URI'];
 $request = parse_url($request, PHP_URL_PATH);
 
-// mengarahkan request
-switch ($request) {
+
+
+switch($request){
     case '/':
     case '/index.php':
         $aplikasi->jalankan();
         break;
-    case '/index.php/simpan':
-        $aplikasi->simpanBuku();
+    case '/index.php/buku/simpan':
+        $aplikasi->simpan();
         break;
-    case '/index.php/hapus':
-        $aplikasi->hapusBuku();
+    case '/index.php/buku/hapus':
+        $aplikasi->hapus();
         break;
-    case '/index.php/edit':
-        $aplikasi->editBuku();
+    case'/index.php/edit':
+       
+        $aplikasi->edit();
         break;
-    case '/index.php/update':
-        $aplikasi->updateBuku();
+    case'/index.php/buku/update':
+            $aplikasi->update();
         break;
+    default:
+        $aplikasi->jalankan();
 }
